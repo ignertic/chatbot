@@ -12,12 +12,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'ChatBot',
       theme: ThemeData(
 
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'Flutter&Python'),
     );
   }
 }
@@ -36,8 +36,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final GlobalKey<AnimatedListState> _listKey = GlobalKey();
   List<String> _data = [];
-  static const String BOT_URL = "http://192.168.1.241:8001/bot"; // replace with server address
+  static const String BOT_URL = "http://supercodebot.herokuapp.com/bot"; // replace with server address
   TextEditingController _queryController = TextEditingController();
+
 
 
 
@@ -46,9 +47,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.orangeAccent.withOpacity(.7) ,
         centerTitle: true,
         title: Text("Flutter & Python"),
       ),
+      backgroundColor: Colors.orangeAccent,
       body: Stack(
         children: <Widget>[
           AnimatedList(
@@ -59,21 +62,32 @@ class _MyHomePageState extends State<MyHomePage> {
               return _buildItem(_data[index], animation, index);
             }
           ),
+
           Align(
             alignment: Alignment.bottomCenter,
-            child: TextField(
-              decoration: InputDecoration(
-                icon: Icon(Icons.message, color: Colors.greenAccent,),
-                hintText: "Hello",
-              ),
-              controller: _queryController,
-              textInputAction: TextInputAction.send,
-              onSubmitted: (msg){
+            child: ColorFiltered(
+              colorFilter: ColorFilter.linearToSrgbGamma(),
+              child: Container(
+                color: Colors.white.withOpacity(.7),
+                child: Padding(
+                  padding: EdgeInsets.only(left: 20, right: 20),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      icon: Icon(Icons.message, color: Colors.orange,),
+                      hintText: "Hello",
+                      fillColor: Colors.white12,
+                    ),
+                    controller: _queryController,
+                    textInputAction: TextInputAction.send,
+                    onSubmitted: (msg){
 
-                this._getResponse();
-              },
+                      this._getResponse();
+                    },
 
-            ),
+                  )
+                )
+              )
+            )
           )
         ],
       )
@@ -92,8 +106,9 @@ class _MyHomePageState extends State<MyHomePage> {
       try{
         client.post(BOT_URL, body: {"query" : _queryController.text},)
         ..then((response){
+          print(response.body);
           Map<String, dynamic> data = jsonDecode(response.body);
-          _insertSingleItem(data['response']+"<bot>"); 
+          _insertSingleItem(data['response']+"<bot>");
 
         });
       }catch(e){
@@ -120,8 +135,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
         child : Bubble(
         child: Text(item.replaceAll("<bot>", "")),
-        color: mine ? Colors.blue : Colors.indigo,
+        color: mine ? Colors.deepOrangeAccent : Colors.white,
         padding: BubbleEdges.all(10),
+
 
       )),
     )
